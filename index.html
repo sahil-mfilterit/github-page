@@ -9,7 +9,7 @@
     <h2>Pointer Bot Detection Running...</h2>
     <p>Open Console (F12)</p>
 
-    <div id="result">  </div>
+    <div id="result"> </div>
 
     <div id="getDevicePointerCapability()"> </div>
 
@@ -34,9 +34,9 @@
             const hasFine = matchMedia("(any-pointer: fine)").matches;
             const hasCoarse = matchMedia("(any-pointer: coarse)").matches;
 
-            if (hasFine) return "FINE";
-            if (hasCoarse) return "COARSE";
-            return {hasFine, hasCoarse};
+            // if (hasFine) return "FINE";
+            // if (hasCoarse) return "COARSE";
+            return { hasFine, hasCoarse };
         }
 
         // -----------------------------
