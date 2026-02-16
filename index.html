@@ -9,13 +9,9 @@
     <h2>Pointer Bot Detection Running...</h2>
     <p>Open Console (F12)</p>
 
-    <div id="result">
+    <div id="result">  </div>
 
-    </div>
-
-    <div id="getDevicePointerCapability()">
-
-    </div>
+    <div id="getDevicePointerCapability()"> </div>
 
     <script>
 
@@ -89,7 +85,8 @@
             return {
                 device,
                 pointer,
-                botReason
+                botReason,
+                getDevicePointerCapability: getDevicePointerCapability()
             };
         }
 
