@@ -3,15 +3,38 @@
 
 <head>
     <title>Pointer Bot Detection Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        .box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .bot {
+            color: red;
+            font-weight: bold;
+        }
+
+        .human {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
-    <h2>Pointer Bot Detection Running...</h2>
-    <p>Open Console (F12)</p>
 
-    <div id="result"> </div>
+    <h2>Pointer Bot Detection Test</h2>
 
-    <div id="getDevicePointerCapability()"> </div>
+    <div class="box" id="output"></div>
 
     <script>
 
@@ -20,7 +43,6 @@
         // -----------------------------
         function getDeviceType() {
             const ua = navigator.userAgent;
-
             if (/Mobi|Android|iPhone|iPad/i.test(ua)) {
                 return "MOBILE";
             }
@@ -30,21 +52,9 @@
         // -----------------------------
         // POINTER CAPABILITY DETECTION
         // -----------------------------
-        function getDevicePointerCapability() {
-            const hasFine = matchMedia("(any-pointer: fine)").matches;
-            const hasCoarse = matchMedia("(any-pointer: coarse)").matches;
-
-            // if (hasFine) return "FINE";
-            // if (hasCoarse) return "COARSE";
-            return { hasFine, hasCoarse };
-        }
-
-        // -----------------------------
-        // POINTER CAPABILITY DETECTION
-        // -----------------------------
         function getPointerCapability() {
-            const hasFine = matchMedia("(any-pointer: fine)").matches;
-            const hasCoarse = matchMedia("(any-pointer: coarse)").matches;
+            const hasFine = matchMedia("(pointer: fine)").matches;
+            const hasCoarse = matchMedia("(pointer: coarse)").matches;
 
             if (hasFine) return "FINE";
             if (hasCoarse) return "COARSE";
@@ -59,43 +69,45 @@
             const device = getDeviceType();
             const pointer = getPointerCapability();
 
-            console.log("-------- POINTER BOT TEST --------");
-            console.log("UserAgent:", navigator.userAgent);
-            console.log("Device Type:", device);
-            console.log("Pointer Capability:", pointer);
-
             let botReason = null;
 
-            // 📱 Mobile should NOT have fine pointer
             if (device === "MOBILE" && pointer === "FINE") {
                 botReason = "MOBILE_FINE_POINTER";
             }
 
-            // 💻 Desktop should always have fine pointer
             if (device === "DESKTOP" && pointer !== "FINE") {
                 botReason = "DESKTOP_NO_FINE_POINTER";
             }
 
-            if (botReason) {
-                console.warn("🚩 BOT DETECTED:", botReason);
-            } else {
-                console.log("✅ HUMAN LIKELY");
-            }
-
             return {
+                userAgent: navigator.userAgent,
                 device,
                 pointer,
-                botReason,
-                getDevicePointerCapability: getDevicePointerCapability()
+                touchPoints: navigator.maxTouchPoints,
+                botReason
             };
         }
 
         // RUN TEST
         const result = detectPointerMismatchBot();
-        document.getElementById("result").innerText = JSON.stringify(result)
+
+        // SHOW IN HTML
+        const output = document.getElementById("output");
+
+        output.innerHTML = `
+  <p><b>UserAgent:</b> ${result.userAgent}</p>
+  <p><b>Device Type:</b> ${result.device}</p>
+  <p><b>Primary Pointer:</b> ${result.pointer}</p>
+  <p><b>Max Touch Points:</b> ${result.touchPoints}</p>
+  <p class="${result.botReason ? 'bot' : 'human'}">
+    ${result.botReason ? '🚩 BOT DETECTED: ' + result.botReason : '✅ HUMAN LIKELY'}
+  </p>
+`;
+
         console.log("Final Result:", result);
 
     </script>
+
 </body>
 
 </html>
