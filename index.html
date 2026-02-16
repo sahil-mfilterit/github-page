@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pointer Bot Detection Test</title>
+</head>
+
+<body>
+    <h2>Pointer Bot Detection Running...</h2>
+    <p>Open Console (F12)</p>
+
+    <div id="result">
+
+    </div>
+
+    <div id="getDevicePointerCapability()">
+
+    </div>
+
+    <script>
+
+        // -----------------------------
+        // DEVICE TYPE DETECTION
+        // -----------------------------
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+
+            if (/Mobi|Android|iPhone|iPad/i.test(ua)) {
+                return "MOBILE";
+            }
+            return "DESKTOP";
+        }
+
+        // -----------------------------
+        // POINTER CAPABILITY DETECTION
+        // -----------------------------
+        function getDevicePointerCapability() {
+            const hasFine = matchMedia("(any-pointer: fine)").matches;
+            const hasCoarse = matchMedia("(any-pointer: coarse)").matches;
+
+            if (hasFine) return "FINE";
+            if (hasCoarse) return "COARSE";
+            return {hasFine, hasCoarse};
+        }
+
+        // -----------------------------
+        // POINTER CAPABILITY DETECTION
+        // -----------------------------
+        function getPointerCapability() {
+            const hasFine = matchMedia("(any-pointer: fine)").matches;
+            const hasCoarse = matchMedia("(any-pointer: coarse)").matches;
+
+            if (hasFine) return "FINE";
+            if (hasCoarse) return "COARSE";
+            return "NONE";
+        }
+
+        // -----------------------------
+        // BOT MISMATCH LOGIC
+        // -----------------------------
+        function detectPointerMismatchBot() {
+
+            const device = getDeviceType();
+            const pointer = getPointerCapability();
+
+            console.log("-------- POINTER BOT TEST --------");
+            console.log("UserAgent:", navigator.userAgent);
+            console.log("Device Type:", device);
+            console.log("Pointer Capability:", pointer);
+
+            let botReason = null;
+
+            // 📱 Mobile should NOT have fine pointer
+            if (device === "MOBILE" && pointer === "FINE") {
+                botReason = "MOBILE_FINE_POINTER";
+            }
+
+            // 💻 Desktop should always have fine pointer
+            if (device === "DESKTOP" && pointer !== "FINE") {
+                botReason = "DESKTOP_NO_FINE_POINTER";
+            }
+
+            if (botReason) {
+                console.warn("🚩 BOT DETECTED:", botReason);
+            } else {
+                console.log("✅ HUMAN LIKELY");
+            }
+
+            return {
+                device,
+                pointer,
+                botReason
+            };
+        }
+
+        // RUN TEST
+        const result = detectPointerMismatchBot();
+        document.getElementById("result").innerText = JSON.stringify(result)
+        console.log("Final Result:", result);
+
+    </script>
+</body>
+
+</html>
